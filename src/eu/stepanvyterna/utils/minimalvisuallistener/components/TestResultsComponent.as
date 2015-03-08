@@ -217,6 +217,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			{
 				return;
 			}
+			if(stats.failed > 0)
+			{
+				label.textField.textColor = Theme.COLOR_FAIL;
+			}
 			var txt:TextField = statsLabel.textField;
 			statsLabel.text = stats.toString();
 			statsLabel.draw();

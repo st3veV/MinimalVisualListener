@@ -1,5 +1,5 @@
 /**
- * FailureDetailWindow.as
+ * TestDetailWindow.as
  *
  * The MIT License (MIT)
  *
