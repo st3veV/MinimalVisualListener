@@ -9,7 +9,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 	{
 		private var _testElements:Vector.<TestElement>;
 		private var _name:String;
-		private var _dirty:Boolean;
+		private var _dirty:Boolean = true;
 
 		public function TestSuiteElement( name:String )
 		{

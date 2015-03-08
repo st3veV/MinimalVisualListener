@@ -12,16 +12,19 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 	import com.bit101.components.Window;
 
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestElement;
-
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestSuiteElement;
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestSuiteElementStats;
 
-	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 
-	public class TestResultsComponent
+	public class TestResultsComponent extends ScrollPane
 	{
+
+		public static const COLOR_PASS:uint = 0x009f00;
+		public static const COLOR_IGNORE:uint = 0xff7f00;
+		public static const COLOR_FAIL:uint = 0xff0000;
 
 		private static const LABEL_NAME:String = "label";
 		private static const STATS_NAME:String = "stats";
@@ -30,29 +33,36 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		private static const WINDOW_HEADER_HEIGHT:Number = 20;
 		private static const HEADER_STATS_RIGHT_OFFSET:Number = 5;
 
-		private var passTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, 0x009f00, true );   //Green text
-		private var ignoreTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, 0xff7f00, true ); //Orange text
-		private var failTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, 0xff0000, true );   //Red text
+		private var passTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, COLOR_PASS, true );   //Green text
+		private var ignoreTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, COLOR_IGNORE, true ); //Orange text
+		private var failTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, COLOR_FAIL, true );   //Red text
 
-		private var _scroller:ScrollPane;
 		private var tests:Accordion;
 		private var _testSuites:Vector.<TestSuiteElement>;
-		private var _width:Number;
-		private var _height:Number;
+		private var lists:Vector.<List> = new Vector.<List>();
 
-		public function TestResultsComponent( width:Number, height:Number )
+
+		public function TestResultsComponent( parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0 )
 		{
-			_width = width;
-			_height = height;
+			super( parent, xpos, ypos );
 			init();
 		}
 
 		private function init():void
 		{
-			_scroller = new ScrollPane();
-			_scroller.setSize( _width, _height );
-			tests = new Accordion( _scroller );
-			tests.setSize( _width - SCROLLBAR_WIDTH, _height - SCROLLBAR_HEIGHT );
+			tests = new Accordion( this.content );
+			tests.setSize( width - SCROLLBAR_WIDTH, height - SCROLLBAR_HEIGHT );
+			tests.draw();
+		}
+
+		override public function setSize( w:Number, h:Number ):void
+		{
+			super.setSize( w, h );
+			if ( tests )
+			{
+				tests.setSize( w - SCROLLBAR_WIDTH, h - SCROLLBAR_HEIGHT );
+				tests.draw();
+			}
 		}
 
 		public function initialize( testSuites:Vector.<TestSuiteElement> ):void
@@ -65,6 +75,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			{
 				win = tests.getWindowAt( i );
 				win.title = _testSuites[ i ].name;
+				win.draw();
 				adjustHeader( win.titleBar );
 				generateTestContent( _testSuites[ i ], win );
 			}
@@ -72,19 +83,21 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			{
 				tests.addWindow( _testSuites[ i ].name );
 				win = tests.getWindowAt( i );
+				win.draw();
 				adjustHeader( win.titleBar );
 				generateTestContent( _testSuites[ i ], win );
 			}
 			tests.height = Math.max( _height - SCROLLBAR_HEIGHT, i * WINDOW_HEADER_HEIGHT );
 			for ( var j:int = 0; j < lists.length; j++ )
 			{
-				var list:List = lists[ j ];
+				const list:List = lists[ j ];
 				list.height = tests.height - i * WINDOW_HEADER_HEIGHT;
 				list.width = tests.width;
+				list.draw();
 			}
-		}
 
-		private var lists:Vector.<List> = new Vector.<List>();
+			refresh();
+		}
 
 		private function generateTestContent( testSuiteElement:TestSuiteElement, window:Window ):void
 		{
@@ -92,13 +105,31 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			for ( var i:int = 0; i < testSuiteElement.testElements.length; i++ )
 			{
 				var testElement:TestElement = testSuiteElement.testElements[ i ];
-				items.push( testElement.readableName );
+				items.push( testElement );
 			}
-			lists.push( new List( window, 0, 0, items ) );
+			const list:List = new List( window, 0, 0, items );
+			list.listItemClass = TestResultListItem;
+			lists.push( list )
 		}
 
-		public function update():void
+
+		public function refresh():void
 		{
+			draw();
+			invalidate();
+		}
+
+
+		override public function draw():void
+		{
+			super.draw();
+
+			tests.draw();
+
+			if ( !_testSuites )
+			{
+				return;
+			}
 			var stats:TestSuiteElementStats;
 			var win:Window;
 			var suiteElement:TestSuiteElement;
@@ -109,7 +140,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 				{
 					win = tests.getWindowAt( i );
 					stats = suiteElement.getStats();
+					win.titleBar.draw();
 					adjustHeader( win.titleBar, stats );
+					suiteElement.dirty = false;
+					lists[ i ].draw();
 				}
 			}
 		}
@@ -130,7 +164,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 					label = header.content.getChildAt( i++ ) as Label;
 				}
 				label.name = LABEL_NAME;
-				statsLabel = new Label( header, 0, 1, "0:0:0/0" );
+				statsLabel = new Label( header.content, 0, 1, "0:0:0/0" );
 				statsLabel.name = STATS_NAME;
 				statsLabel.textField.x = header.width - statsLabel.textField.width - HEADER_STATS_RIGHT_OFFSET;
 			}
@@ -140,6 +174,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			}
 			var txt:TextField = statsLabel.textField;
 			statsLabel.text = stats.toString();
+			statsLabel.draw();
 
 			var fromIndex:int = 0;
 			var toIndex:int = txt.text.indexOf( ":", fromIndex );
@@ -151,12 +186,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			toIndex = txt.text.indexOf( "/", fromIndex );
 			txt.setTextFormat( failTextFormat, fromIndex, toIndex );
 
-			txt.x = header.width - txt.width - HEADER_STATS_RIGHT_OFFSET;
-		}
-
-		public function get display():DisplayObject
-		{
-			return _scroller;
+			txt.x = _width - txt.width - HEADER_STATS_RIGHT_OFFSET - SCROLLBAR_WIDTH;
 		}
 	}
 }

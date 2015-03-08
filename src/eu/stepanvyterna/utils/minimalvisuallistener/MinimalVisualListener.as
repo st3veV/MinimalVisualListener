@@ -17,8 +17,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 	import org.flexunit.runner.Result;
 	import org.flexunit.runner.notification.Failure;
 	import org.flexunit.runner.notification.IAsyncRunListener;
+	import org.flexunit.runner.notification.IAsyncStartupRunListener;
+	import org.flexunit.runner.notification.async.AsyncListenerWatcher;
 
-	public class MinimalVisualListener extends Sprite implements IAsyncRunListener
+	public class MinimalVisualListener extends Sprite implements IAsyncRunListener, IAsyncStartupRunListener
 	{
 		private var _width:Number;
 		private var _height:Number;
@@ -28,6 +30,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 
 		private var currentTest:TestElement;
 		private var _testSuiteElements:Vector.<TestSuiteElement> = new Vector.<TestSuiteElement>();
+		private var _ready:Boolean = false;
 
 		public function MinimalVisualListener( width:Number, height:Number )
 		{
@@ -52,11 +55,14 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 			container.draggable = false;
 			container.setSize( _width, _height );
 
-			_statisticsComponent = new StatisticsComponent( _width * .3, _height - container.titleBar.height );
-			container.addChild( _statisticsComponent.display );
-			_resultsComponent = new TestResultsComponent( _width * .7, _height - container.titleBar.height );
-			container.addChild( _resultsComponent.display );
-			_resultsComponent.display.x = _width * .3;
+			_statisticsComponent = new StatisticsComponent( container.content );
+			_statisticsComponent.setSize( _width * .3, _height - container.titleBar.height );
+
+			_resultsComponent = new TestResultsComponent( container.content, _width * .3 );
+			_resultsComponent.setSize( _width * .7, _height - container.titleBar.height );
+
+			_ready = true;
+			dispatchEvent( new Event( AsyncListenerWatcher.LISTENER_READY ) );
 		}
 
 		public function testRunStarted( description:IDescription ):void
@@ -69,7 +75,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 
 		public function testRunFinished( result:Result ):void
 		{
-
+			_resultsComponent.refresh();
 		}
 
 		public function testStarted( description:IDescription ):void
@@ -88,7 +94,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 				_statisticsComponent.testFailed();
 			}
 			currentTest.executed = true;
-			_resultsComponent.update();
+			_resultsComponent.refresh();
 		}
 
 		public function testFailure( failure:Failure ):void
@@ -107,7 +113,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 			currentTest.executed = true;
 
 			_statisticsComponent.testIgnored();
-			_resultsComponent.update();
+			_resultsComponent.refresh();
 		}
 
 		public function testTimed( description:IDescription, runTime:Number ):void
@@ -151,5 +157,9 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 			return null;
 		}
 
+		public function get ready():Boolean
+		{
+			return _ready;
+		}
 	}
 }

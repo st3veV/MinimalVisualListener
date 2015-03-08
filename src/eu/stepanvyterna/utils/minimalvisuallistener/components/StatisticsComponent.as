@@ -8,11 +8,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 	import com.bit101.components.Meter;
 	import com.bit101.components.VBox;
 
-	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 
-	public class StatisticsComponent
+	public class StatisticsComponent extends VBox
 	{
-		private var _container:VBox;
 		private var totalTests:Label;
 		private var remainingTests:Label;
 		private var passedTests:Label;
@@ -23,15 +22,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		private var failed:int = 0;
 		private var total:int = 0;
 		private var ignored:int = 0;
-		private var _width:Number;
-		private var _height:Number;
 
-		public function StatisticsComponent( width:Number, height:Number )
+		public function StatisticsComponent( parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0 )
 		{
-			_width = width;
-			_height = height;
-			_container = new VBox();
-			_container.alignment = VBox.LEFT;
+			super( parent, xpos, ypos );
 			init();
 		}
 
@@ -39,32 +33,32 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		{
 			var line:HBox;
 
-			line = new HBox( _container );
-			line.width = _container.width;
+			line = new HBox( this );
+			line.width = width;
 			new Label( line, 0, 0, "Total Tests: " );
 			totalTests = new Label( line, 0, 0, "0" );
 
-			line = new HBox( _container );
-			line.width = _container.width;
+			line = new HBox( this );
+			line.width = width;
 			new Label( line, 0, 0, "Remaining Tests: " );
 			remainingTests = new Label( line, 0, 0, "0" );
 
-			line = new HBox( _container );
-			line.width = _container.width;
+			line = new HBox( this );
+			line.width = width;
 			new Label( line, 0, 0, "Passed Tests: " );
 			passedTests = new Label( line, 0, 0, "0" );
 
-			line = new HBox( _container );
-			line.width = _container.width;
+			line = new HBox( this );
+			line.width = width;
 			new Label( line, 0, 0, "Failed Tests: " );
 			failedTests = new Label( line, 0, 0, "0" );
 
-			line = new HBox( _container );
-			line.width = _container.width;
+			line = new HBox( this );
+			line.width = width;
 			new Label( line, 0, 0, "Ignored Tests: " );
 			ignoredTests = new Label( line, 0, 0, "0" );
 
-			meter = new Meter( _container, 0, 0, "0/0" );
+			meter = new Meter( this, 0, 0, "0/0" );
 		}
 
 		public function setTestCount( count:int ):void
@@ -111,9 +105,5 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			remainingTests.text = (total - ignored - passed - failed) + "";
 		}
 
-		public function get display():DisplayObject
-		{
-			return _container;
-		}
 	}
 }
