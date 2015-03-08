@@ -30,10 +30,12 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 {
 	import com.bit101.components.Window;
 
+	import eu.stepanvyterna.utils.minimalvisuallistener.components.FailureDetailWindow;
 	import eu.stepanvyterna.utils.minimalvisuallistener.components.StatisticsComponent;
 	import eu.stepanvyterna.utils.minimalvisuallistener.components.TestResultsComponent;
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestElement;
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestSuiteElement;
+	import eu.stepanvyterna.utils.minimalvisuallistener.events.TestElementSelectionEvent;
 
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -85,9 +87,19 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 
 			_resultsComponent = new TestResultsComponent( container.content, _width * .3 );
 			_resultsComponent.setSize( _width * .7, _height - container.titleBar.height );
+			_resultsComponent.addEventListener( TestElementSelectionEvent.TEST_ELEMENT_SELECTED, onElementSelected );
 
 			_ready = true;
 			dispatchEvent( new Event( AsyncListenerWatcher.LISTENER_READY ) );
+		}
+
+		private function onElementSelected( event:TestElementSelectionEvent ):void
+		{
+			const percentSize:Number = .8;
+			var win:FailureDetailWindow = new FailureDetailWindow( this, 0, 0, event.testElement.readableName );
+			win.setSize( _width * percentSize, _height * percentSize );
+			win.move( (_width - win.width) * .5, (_height - win.height) * .5 );
+			win.setFailure( event.testElement.failure );
 		}
 
 		public function testRunStarted( description:IDescription ):void
@@ -125,6 +137,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 		public function testFailure( failure:Failure ):void
 		{
 			currentTest.passed = false;
+			currentTest.failure = failure;
 		}
 
 		public function testAssumptionFailure( failure:Failure ):void

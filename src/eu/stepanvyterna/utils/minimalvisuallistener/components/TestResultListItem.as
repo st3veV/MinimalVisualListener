@@ -33,6 +33,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 	import com.bit101.components.ListItem;
 
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestElement;
+	import eu.stepanvyterna.utils.minimalvisuallistener.settings.Theme;
 
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Shape;
@@ -43,6 +44,8 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 
 		private var passedLight:IndicatorLight;
 		private var label:Label;
+		private var layout:HBox;
+		private var failLabel:Label;
 
 		public function TestResultListItem( parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0, data:Object = null )
 		{
@@ -52,10 +55,12 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 
 		override protected function addChildren():void
 		{
-			var layout:HBox = new HBox( this );
+			layout = new HBox( this );
 			layout.height = height;
 			layout.width = width;
 			layout.alignment = HBox.MIDDLE;
+			layout.mouseChildren = false;
+			layout.mouseEnabled = false;
 
 			var blocker:Shape = new Shape();
 			blocker.graphics.beginFill( 0, 0 );
@@ -106,20 +111,28 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 				{
 					if ( testElement.ignored )
 					{
-						passedLight.color = TestResultsComponent.COLOR_IGNORE;
+						passedLight.color = Theme.COLOR_IGNORE;
 					}
 					else if ( testElement.passed )
 					{
-						passedLight.color = TestResultsComponent.COLOR_PASS;
+						passedLight.color = Theme.COLOR_PASS;
 					}
 					else
 					{
-						passedLight.color = TestResultsComponent.COLOR_FAIL;
+						passedLight.color = Theme.COLOR_FAIL;
 					}
 				}
 				passedLight.isLit = true;
 				passedLight.draw();
 				label.text = testElement.readableName;
+				if ( !testElement.passed && testElement.failure )
+				{
+					if ( !failLabel )
+					{
+						failLabel = new Label( layout, 0, 0, testElement.failure.message );
+						failLabel.textField.textColor = Theme.COLOR_FAIL;
+					}
+				}
 			}
 		}
 	}

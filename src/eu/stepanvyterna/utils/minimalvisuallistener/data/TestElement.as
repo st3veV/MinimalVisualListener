@@ -29,6 +29,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 	import eu.stepanvyterna.utils.minimalvisuallistener.utils.DescriptionParser;
 
 	import org.flexunit.runner.IDescription;
+	import org.flexunit.runner.notification.Failure;
 
 	public class TestElement
 	{
@@ -36,7 +37,8 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 		private var _passed:Boolean = true;
 		private var _ignored:Boolean = false;
 		private var _executed:Boolean = false;
-		private var _suite:TestSuiteElement;
+		private var _parentSuite:TestSuiteElement;
+		private var _failure:Failure;
 
 		public function TestElement( description:IDescription )
 		{
@@ -82,12 +84,22 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 		public function set executed( value:Boolean ):void
 		{
 			_executed = value;
-			_suite.dirty = true;
+			_parentSuite.dirty = true;
 		}
 
-		public function set suite( suite:TestSuiteElement ):void
+		public function set parentSuite( suite:TestSuiteElement ):void
 		{
-			_suite = suite;
+			_parentSuite = suite;
+		}
+
+		public function get failure():Failure
+		{
+			return _failure;
+		}
+
+		public function set failure( value:Failure ):void
+		{
+			_failure = value;
 		}
 	}
 }

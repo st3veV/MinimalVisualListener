@@ -37,17 +37,17 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestElement;
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestSuiteElement;
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestSuiteElementStats;
+	import eu.stepanvyterna.utils.minimalvisuallistener.events.TestElementSelectionEvent;
+	import eu.stepanvyterna.utils.minimalvisuallistener.settings.Theme;
 
 	import flash.display.DisplayObjectContainer;
+	import flash.events.Event;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 
+	[Event(name="test_element_selected", type="eu.stepanvyterna.utils.minimalvisuallistener.events.TestElementSelectionEvent")]
 	public class TestResultsComponent extends ScrollPane
 	{
-
-		public static const COLOR_PASS:uint = 0x009f00;
-		public static const COLOR_IGNORE:uint = 0xff7f00;
-		public static const COLOR_FAIL:uint = 0xff0000;
 
 		private static const LABEL_NAME:String = "label";
 		private static const STATS_NAME:String = "stats";
@@ -56,9 +56,9 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		private static const WINDOW_HEADER_HEIGHT:Number = 20;
 		private static const HEADER_STATS_RIGHT_OFFSET:Number = 5;
 
-		private var passTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, COLOR_PASS, true );   //Green text
-		private var ignoreTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, COLOR_IGNORE, true ); //Orange text
-		private var failTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, COLOR_FAIL, true );   //Red text
+		private var passTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_PASS, true );   //Green text
+		private var ignoreTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_IGNORE, true ); //Orange text
+		private var failTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_FAIL, true );   //Red text
 
 		private var tests:Accordion;
 		private var _testSuites:Vector.<TestSuiteElement>;
@@ -132,7 +132,26 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			}
 			const list:List = new List( window, 0, 0, items );
 			list.listItemClass = TestResultListItem;
+			list.addEventListener( Event.SELECT, onListSelection );
 			lists.push( list )
+		}
+
+		private function onListSelection( event:Event ):void
+		{
+			var list:List = List( event.target );
+			var selectedItem:TestElement = list.selectedItem as TestElement;
+			if ( selectedItem && selectedItem.failure )
+			{
+//				trace( "Item selected: " + selectedItem.failure.stackTrace );
+				dispatchEvent( new TestElementSelectionEvent( TestElementSelectionEvent.TEST_ELEMENT_SELECTED,
+				                                              selectedItem
+				               )
+				);
+			}
+			if ( list.selectedIndex != -1 )
+			{
+				list.selectedIndex = -1;
+			}
 		}
 
 

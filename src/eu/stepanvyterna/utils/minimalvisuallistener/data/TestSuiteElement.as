@@ -43,7 +43,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 		public function addTestElement( test:TestElement ):void
 		{
 			_testElements.push( test );
-			test.suite = this;
+			test.parentSuite = this;
 		}
 
 		public function getStats():TestSuiteElementStats

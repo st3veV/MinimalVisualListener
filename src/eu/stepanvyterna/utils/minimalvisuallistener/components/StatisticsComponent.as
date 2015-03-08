@@ -31,6 +31,8 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 	import com.bit101.components.Meter;
 	import com.bit101.components.VBox;
 
+	import eu.stepanvyterna.utils.minimalvisuallistener.settings.Theme;
+
 	import flash.display.DisplayObjectContainer;
 
 	public class StatisticsComponent extends VBox
@@ -70,16 +72,19 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			line.width = width;
 			new Label( line, 0, 0, "Passed Tests: " );
 			passedTests = new Label( line, 0, 0, "0" );
+			passedTests.textField.textColor = Theme.COLOR_PASS;
 
 			line = new HBox( this );
 			line.width = width;
 			new Label( line, 0, 0, "Failed Tests: " );
 			failedTests = new Label( line, 0, 0, "0" );
+			failedTests.textField.textColor = Theme.COLOR_FAIL;
 
 			line = new HBox( this );
 			line.width = width;
 			new Label( line, 0, 0, "Ignored Tests: " );
 			ignoredTests = new Label( line, 0, 0, "0" );
+			ignoredTests.textField.textColor = Theme.COLOR_IGNORE;
 
 			meter = new Meter( this, 0, 0, "0/0" );
 		}
