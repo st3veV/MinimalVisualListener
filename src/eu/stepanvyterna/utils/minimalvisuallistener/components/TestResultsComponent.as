@@ -56,9 +56,13 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		private static const WINDOW_HEADER_HEIGHT:Number = 20;
 		private static const HEADER_STATS_RIGHT_OFFSET:Number = 5;
 
-		private var passTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_PASS, true );   //Green text
-		private var ignoreTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_IGNORE, true ); //Orange text
-		private var failTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_FAIL, true );   //Red text
+		private var passTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_PASS, true
+		);   //Green text
+		private var ignoreTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_IGNORE,
+		                                                          true
+		); //Orange text
+		private var failTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_FAIL, true
+		);   //Red text
 
 		private var tests:Accordion;
 		private var _testSuites:Vector.<TestSuiteElement>;
@@ -140,9 +144,8 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		{
 			var list:List = List( event.target );
 			var selectedItem:TestElement = list.selectedItem as TestElement;
-			if ( selectedItem && selectedItem.failure )
+			if ( selectedItem )
 			{
-//				trace( "Item selected: " + selectedItem.failure.stackTrace );
 				dispatchEvent( new TestElementSelectionEvent( TestElementSelectionEvent.TEST_ELEMENT_SELECTED,
 				                                              selectedItem
 				               )

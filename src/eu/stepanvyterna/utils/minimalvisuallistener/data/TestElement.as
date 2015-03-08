@@ -33,12 +33,15 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 
 	public class TestElement
 	{
+		private const LOG_LINE_SEPARATOR:String = "\n";
+
 		private var _description:IDescription;
 		private var _passed:Boolean = true;
 		private var _ignored:Boolean = false;
 		private var _executed:Boolean = false;
 		private var _parentSuite:TestSuiteElement;
 		private var _failure:Failure;
+		private var _log:String;
 
 		public function TestElement( description:IDescription )
 		{
@@ -100,6 +103,23 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 		public function set failure( value:Failure ):void
 		{
 			_failure = value;
+		}
+
+		public function addLogMessage( message:String ):void
+		{
+			if ( !_log )
+			{
+				_log = message;
+			}
+			else
+			{
+				_log += LOG_LINE_SEPARATOR + message;
+			}
+		}
+
+		public function get log():String
+		{
+			return _log;
 		}
 	}
 }

@@ -30,7 +30,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 {
 	import com.bit101.components.Window;
 
-	import eu.stepanvyterna.utils.minimalvisuallistener.components.FailureDetailWindow;
+	import eu.stepanvyterna.utils.minimalvisuallistener.components.TestDetailWindow;
 	import eu.stepanvyterna.utils.minimalvisuallistener.components.StatisticsComponent;
 	import eu.stepanvyterna.utils.minimalvisuallistener.components.TestResultsComponent;
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestElement;
@@ -96,10 +96,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 		private function onElementSelected( event:TestElementSelectionEvent ):void
 		{
 			const percentSize:Number = .8;
-			var win:FailureDetailWindow = new FailureDetailWindow( this, 0, 0, event.testElement.readableName );
+			var win:TestDetailWindow = new TestDetailWindow( this, 0, 0, event.testElement.readableName );
 			win.setSize( _width * percentSize, _height * percentSize );
 			win.move( (_width - win.width) * .5, (_height - win.height) * .5 );
-			win.setFailure( event.testElement.failure );
+			win.setTestElement( event.testElement );
 		}
 
 		public function testRunStarted( description:IDescription ):void
@@ -118,6 +118,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 		public function testStarted( description:IDescription ):void
 		{
 			currentTest = findElementByDescription( description );
+			currentTest.addLogMessage( "--- Starting test: " + currentTest.readableName + " ---" );
 		}
 
 		public function testFinished( description:IDescription ):void
@@ -131,6 +132,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 				_statisticsComponent.testFailed();
 			}
 			currentTest.executed = true;
+			currentTest.addLogMessage( "--- Test finished: " + currentTest.passed.toString().toUpperCase() + " ---" );
 			_resultsComponent.refresh();
 		}
 
@@ -149,6 +151,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 			currentTest = findElementByDescription( description );
 			currentTest.ignored = true;
 			currentTest.executed = true;
+			currentTest.addLogMessage( "--- Ignoring: " + currentTest.readableName + " ---" )
 
 			_statisticsComponent.testIgnored();
 			_resultsComponent.refresh();
@@ -157,6 +160,11 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 		public function testTimed( description:IDescription, runTime:Number ):void
 		{
 			_statisticsComponent.testPassed();
+		}
+
+		public function log( message:String ):void
+		{
+			currentTest.addLogMessage( message );
 		}
 
 		private function getLowLevelTestSuites( description:IDescription, parentSuite:TestSuiteElement = null ):void
@@ -199,5 +207,6 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 		{
 			return _ready;
 		}
+
 	}
 }
