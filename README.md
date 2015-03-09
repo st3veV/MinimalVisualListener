@@ -2,6 +2,7 @@
 Pure AS3 visual listener for FlexUnit based on MinimalComps
 
 ![Screenshot](screenshots/screenshot.png)
+(Tests displayed on the sceenshot were shamelessly stolen from https://github.com/mnem/flexunit_visual_listener/tree/master/src-example)
 
 Usage:
 ------
