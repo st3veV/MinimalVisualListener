@@ -42,6 +42,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 		private var _parentSuite:TestSuiteElement;
 		private var _failure:Failure;
 		private var _log:String;
+		private var _executionTime:Number = -1;
 
 		public function TestElement( description:IDescription )
 		{
@@ -120,6 +121,16 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 		public function get log():String
 		{
 			return _log;
+		}
+
+		public function get executionTime():Number
+		{
+			return _executionTime;
+		}
+
+		public function set executionTime( value:Number ):void
+		{
+			_executionTime = value;
 		}
 	}
 }

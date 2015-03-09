@@ -34,13 +34,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 	import com.bit101.components.Window;
 
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestElement;
-
 	import eu.stepanvyterna.utils.minimalvisuallistener.settings.Theme;
 
 	import flash.display.DisplayObjectContainer;
 	import flash.events.MouseEvent;
-
-	import org.flexunit.runner.notification.Failure;
 
 	public class TestDetailWindow extends Window
 	{

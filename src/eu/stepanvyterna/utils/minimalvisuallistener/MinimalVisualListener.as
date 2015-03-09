@@ -45,9 +45,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 	import org.flexunit.runner.notification.Failure;
 	import org.flexunit.runner.notification.IAsyncRunListener;
 	import org.flexunit.runner.notification.IAsyncStartupRunListener;
+	import org.flexunit.runner.notification.ITemporalRunListener;
 	import org.flexunit.runner.notification.async.AsyncListenerWatcher;
 
-	public class MinimalVisualListener extends Sprite implements IAsyncRunListener, IAsyncStartupRunListener
+	public class MinimalVisualListener extends Sprite implements IAsyncRunListener, IAsyncStartupRunListener, ITemporalRunListener
 	{
 		private var _width:Number;
 		private var _height:Number;
@@ -159,7 +160,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 
 		public function testTimed( description:IDescription, runTime:Number ):void
 		{
-			_statisticsComponent.testPassed();
+			currentTest.executionTime = runTime;
 		}
 
 		public function log( message:String ):void

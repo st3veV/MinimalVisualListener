@@ -41,11 +41,13 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 
 	public class TestResultListItem extends ListItem
 	{
+		private static const LIST_SCROLLBAR_WIDTH:Number = 10;
 
 		private var passedLight:IndicatorLight;
 		private var label:Label;
 		private var layout:HBox;
 		private var failLabel:Label;
+		private var executionTime:Label;
 
 		public function TestResultListItem( parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0, data:Object = null )
 		{
@@ -130,8 +132,15 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 					if ( !failLabel )
 					{
 						failLabel = new Label( layout, 0, 0, testElement.failure.message );
+						failLabel.textField.multiline = false;
 						failLabel.textField.textColor = Theme.COLOR_FAIL;
 					}
+				}
+				if ( testElement.executed && !executionTime )
+				{
+					executionTime = new Label( this, 0, 0, String( testElement.executionTime ) );
+					executionTime.draw();
+					executionTime.move( width - executionTime.width - LIST_SCROLLBAR_WIDTH, (height - executionTime.height) * .5 );
 				}
 			}
 		}

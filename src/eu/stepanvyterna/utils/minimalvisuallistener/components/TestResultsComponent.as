@@ -55,6 +55,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		private static const SCROLLBAR_HEIGHT:Number = 10;
 		private static const WINDOW_HEADER_HEIGHT:Number = 20;
 		private static const HEADER_STATS_RIGHT_OFFSET:Number = 5;
+		private static const MIN_WINDOW_HEIGHT:Number = 50;
 
 		private var passTextFormat:TextFormat = new TextFormat( Style.fontName, Style.fontSize, Theme.COLOR_PASS, true
 		);   //Green text
@@ -114,7 +115,21 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 				adjustHeader( win.titleBar );
 				generateTestContent( _testSuites[ i ], win );
 			}
-			tests.height = Math.max( _height - SCROLLBAR_HEIGHT, i * WINDOW_HEADER_HEIGHT );
+
+			if ( _height - SCROLLBAR_HEIGHT < i * WINDOW_HEADER_HEIGHT + MIN_WINDOW_HEIGHT )
+			{
+				tests.height = i * WINDOW_HEADER_HEIGHT + MIN_WINDOW_HEIGHT;
+				tests.width = width - SCROLLBAR_WIDTH;
+			}
+			else
+			{
+				tests.height = height;
+				tests.width = width;
+				this._vScrollbar.parent.removeChild( _vScrollbar );
+			}
+			this._hScrollbar.parent.removeChild( _hScrollbar );
+			this._corner.parent.removeChild( _corner );
+
 			for ( var j:int = 0; j < lists.length; j++ )
 			{
 				const list:List = lists[ j ];
@@ -169,12 +184,25 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		{
 			super.draw();
 
-			tests.draw();
-
 			if ( !_testSuites )
 			{
 				return;
 			}
+
+			this._mask.height = height;
+			if ( this._vScrollbar.parent )
+			{
+				this._vScrollbar.height = height;
+			}
+			else
+			{
+				tests.width = width;
+				this._mask.width = width;
+			}
+
+			tests.draw();
+
+
 			var stats:TestSuiteElementStats;
 			var win:Window;
 			var suiteElement:TestSuiteElement;
@@ -211,13 +239,13 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 				label.name = LABEL_NAME;
 				statsLabel = new Label( header.content, 0, 1, "0:0:0/0" );
 				statsLabel.name = STATS_NAME;
-				statsLabel.textField.x = header.width - statsLabel.textField.width - HEADER_STATS_RIGHT_OFFSET;
+				statsLabel.textField.x = tests.width - statsLabel.textField.width - HEADER_STATS_RIGHT_OFFSET;
 			}
 			if ( !stats )
 			{
 				return;
 			}
-			if(stats.failed > 0)
+			if ( stats.failed > 0 )
 			{
 				label.textField.textColor = Theme.COLOR_FAIL;
 			}
@@ -235,7 +263,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			toIndex = txt.text.indexOf( "/", fromIndex );
 			txt.setTextFormat( failTextFormat, fromIndex, toIndex );
 
-			txt.x = _width - txt.width - HEADER_STATS_RIGHT_OFFSET - SCROLLBAR_WIDTH;
+			txt.x = tests.width - txt.width - HEADER_STATS_RIGHT_OFFSET;
 		}
 	}
 }
