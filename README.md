@@ -1,6 +1,8 @@
 # MinimalVisualListener
 Pure AS3 visual listener for FlexUnit based on MinimalComps
 
+![Screenshot](screenshots/screenshot.png)
+
 Usage:
 ------
 ```actionscript
