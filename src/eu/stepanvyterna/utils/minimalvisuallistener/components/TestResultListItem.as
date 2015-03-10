@@ -131,7 +131,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 				{
 					if ( !failLabel )
 					{
-						failLabel = new Label( layout, 0, 0, testElement.failure.message );
+						failLabel = new Label( layout, 0, 0, testElement.failure.message.split("\n").join(" ") );
 						failLabel.textField.multiline = false;
 						failLabel.textField.textColor = Theme.COLOR_FAIL;
 					}

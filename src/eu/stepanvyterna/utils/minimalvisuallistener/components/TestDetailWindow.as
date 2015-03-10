@@ -133,7 +133,8 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 				_selectLogButton.toggle = true;
 				_selectLogButton.selected = false;
 
-				_failDetailHeader.text = _element.failure.message;
+				_failDetailHeader.text = _element.failure.message.split("\n").join(" ");
+				_failDetailHeader.textField.multiline = false;
 				_text.text = _element.failure.stackTrace;
 
 				_currentView = VIEW_FAIL_DETAILS;
