@@ -35,7 +35,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 
 		public function toString():String
 		{
-			return passed + ":" + ignored + ":" + failed + "/" + total
+			return passed + ":" + ignored + ":" + failed + "/" + total;
 		}
 	}
 }

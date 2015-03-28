@@ -30,8 +30,8 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 {
 	import com.bit101.components.Window;
 
-	import eu.stepanvyterna.utils.minimalvisuallistener.components.TestDetailWindow;
 	import eu.stepanvyterna.utils.minimalvisuallistener.components.StatisticsComponent;
+	import eu.stepanvyterna.utils.minimalvisuallistener.components.TestDetailWindow;
 	import eu.stepanvyterna.utils.minimalvisuallistener.components.TestResultsComponent;
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestElement;
 	import eu.stepanvyterna.utils.minimalvisuallistener.data.TestSuiteElement;
@@ -53,11 +53,11 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 		private var _width:Number;
 		private var _height:Number;
 		private var container:Window;
-		private var _statisticsComponent:StatisticsComponent;
-		private var _resultsComponent:TestResultsComponent;
+		private var statisticsComponent:StatisticsComponent;
+		private var resultsComponent:TestResultsComponent;
 
 		private var currentTest:TestElement;
-		private var _testSuiteElements:Vector.<TestSuiteElement> = new Vector.<TestSuiteElement>();
+		private var testSuiteElements:Vector.<TestSuiteElement> = new Vector.<TestSuiteElement>();
 		private var _ready:Boolean = false;
 
 		public function MinimalVisualListener( width:Number, height:Number )
@@ -65,7 +65,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 			_width = width;
 			_height = height;
 
-			if ( stage )
+			if (stage)
 			{
 				init();
 			}
@@ -83,12 +83,12 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 			container.draggable = false;
 			container.setSize( _width, _height );
 
-			_statisticsComponent = new StatisticsComponent( container.content );
-			_statisticsComponent.setSize( _width * .3, _height - container.titleBar.height );
+			statisticsComponent = new StatisticsComponent( container.content );
+			statisticsComponent.setSize( _width * .3, _height - container.titleBar.height );
 
-			_resultsComponent = new TestResultsComponent( container.content, _width * .3 );
-			_resultsComponent.setSize( _width * .7, _height - container.titleBar.height );
-			_resultsComponent.addEventListener( TestElementSelectionEvent.TEST_ELEMENT_SELECTED, onElementSelected );
+			resultsComponent = new TestResultsComponent( container.content, _width * .3 );
+			resultsComponent.setSize( _width * .7, _height - container.titleBar.height );
+			resultsComponent.addEventListener( TestElementSelectionEvent.TEST_ELEMENT_SELECTED, onElementSelected );
 
 			_ready = true;
 			dispatchEvent( new Event( AsyncListenerWatcher.LISTENER_READY ) );
@@ -97,23 +97,23 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 		private function onElementSelected( event:TestElementSelectionEvent ):void
 		{
 			const percentSize:Number = .8;
-			var win:TestDetailWindow = new TestDetailWindow( this, 0, 0, event.testElement.readableName );
-			win.setSize( _width * percentSize, _height * percentSize );
-			win.move( (_width - win.width) * .5, (_height - win.height) * .5 );
-			win.setTestElement( event.testElement );
+			var window:TestDetailWindow = new TestDetailWindow( this, 0, 0, event.testElement.readableName );
+			window.setSize( _width * percentSize, _height * percentSize );
+			window.move( (_width - window.width) * .5, (_height - window.height) * .5 );
+			window.setTestElement( event.testElement );
 		}
 
 		public function testRunStarted( description:IDescription ):void
 		{
-			_statisticsComponent.setTestCount( description.testCount );
+			statisticsComponent.setTestCount( description.testCount );
 
 			getLowLevelTestSuites( description );
-			_resultsComponent.initialize( _testSuiteElements );
+			resultsComponent.initialize( testSuiteElements );
 		}
 
 		public function testRunFinished( result:Result ):void
 		{
-			_resultsComponent.refresh();
+			resultsComponent.refresh();
 		}
 
 		public function testStarted( description:IDescription ):void
@@ -124,17 +124,17 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 
 		public function testFinished( description:IDescription ):void
 		{
-			if ( currentTest.passed )
+			if (currentTest.passed)
 			{
-				_statisticsComponent.testPassed();
+				statisticsComponent.testPassed();
 			}
 			else
 			{
-				_statisticsComponent.testFailed();
+				statisticsComponent.testFailed();
 			}
 			currentTest.executed = true;
 			currentTest.addLogMessage( "--- Test finished: " + currentTest.passed.toString().toUpperCase() + " ---" );
-			_resultsComponent.refresh();
+			resultsComponent.refresh();
 		}
 
 		public function testFailure( failure:Failure ):void
@@ -154,8 +154,8 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 			currentTest.executed = true;
 			currentTest.addLogMessage( "--- Ignoring: " + currentTest.readableName + " ---" )
 
-			_statisticsComponent.testIgnored();
-			_resultsComponent.refresh();
+			statisticsComponent.testIgnored();
+			resultsComponent.refresh();
 		}
 
 		public function testTimed( description:IDescription, runTime:Number ):void
@@ -172,10 +172,10 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 		{
 			var suite:TestSuiteElement;
 
-			if ( description.isSuite )
+			if (description.isSuite)
 			{
 				suite = new TestSuiteElement( description.displayName );
-				for each ( var desc:IDescription in description.children )
+				for each (var desc:IDescription in description.children)
 				{
 					getLowLevelTestSuites( desc, suite );
 				}
@@ -184,19 +184,19 @@ package eu.stepanvyterna.utils.minimalvisuallistener
 			{
 				parentSuite.addTestElement( new TestElement( description ) );
 			}
-			if ( suite && !suite.isEmpty )
+			if (suite && !suite.isEmpty)
 			{
-				_testSuiteElements.push( suite );
+				testSuiteElements.push( suite );
 			}
 		}
 
 		private function findElementByDescription( description:IDescription ):TestElement
 		{
 			var element:TestElement;
-			for each ( var suiteElement:TestSuiteElement in _testSuiteElements )
+			for each (var suiteElement:TestSuiteElement in testSuiteElements)
 			{
 				element = suiteElement.getTestElement( description );
-				if ( element )
+				if (element)
 				{
 					return element;
 				}

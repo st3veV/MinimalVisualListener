@@ -31,5 +31,6 @@ package eu.stepanvyterna.utils.minimalvisuallistener.settings
 		public static var COLOR_PASS:uint = 0x009f00;
 		public static var COLOR_IGNORE:uint = 0xff7f00;
 		public static var COLOR_FAIL:uint = 0xff0000;
+		public static var COLOR_NOT_PROCESSD:uint = 0x666666;
 	}
 }

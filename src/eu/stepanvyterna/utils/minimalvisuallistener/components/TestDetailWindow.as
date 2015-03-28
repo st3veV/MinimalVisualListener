@@ -44,14 +44,14 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 		private static const VIEW_FAIL_DETAILS:String = "fail_details";
 		private static const VIEW_LOG:String = "log";
 
-		private var _text:TextArea;
-		private var _failDetailHeader:Label;
-		private var _subviewSelection:HBox;
-		private var _subviewLayout:VBox;
-		private var _element:TestElement;
-		private var _currentView:String = VIEW_FAIL_DETAILS;
-		private var _selectLogButton:PushButton;
-		private var _selectFailButton:PushButton;
+		private var mainTextArea:TextArea;
+		private var failDetailHeader:Label;
+		private var subviewSelection:HBox;
+		private var subviewLayout:VBox;
+		private var element:TestElement;
+		private var currentView:String = VIEW_FAIL_DETAILS;
+		private var selectLogButton:PushButton;
+		private var selectFailButton:PushButton;
 
 		public function TestDetailWindow( parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0, title:String = "" )
 		{
@@ -69,97 +69,95 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			var mainLayout:VBox = new VBox( this );
 			mainLayout.alignment = VBox.CENTER;
 
-			_subviewSelection = new HBox( mainLayout );
+			subviewSelection = new HBox( mainLayout );
 
-			_subviewLayout = new VBox( mainLayout );
-			_failDetailHeader = new Label( _subviewLayout, 0, 0, "" );
-			_failDetailHeader.textField.textColor = Theme.COLOR_FAIL;
-			_text = new TextArea( _subviewLayout, 0, 0, "" );
-			_text.selectable = true;
-			_text.editable = false;
+			subviewLayout = new VBox( mainLayout );
+			failDetailHeader = new Label( subviewLayout, 0, 0, "" );
+			failDetailHeader.textField.textColor = Theme.COLOR_FAIL;
+			mainTextArea = new TextArea( subviewLayout, 0, 0, "" );
+			mainTextArea.selectable = true;
+			mainTextArea.editable = false;
 		}
 
 		override public function draw():void
 		{
 			super.draw();
-			_subviewSelection.draw();
+			subviewSelection.draw();
 
-			if ( _subviewSelection.numChildren > 0 )
+			if (subviewSelection.numChildren > 0)
 			{
-				_selectLogButton.selected = _currentView == VIEW_LOG;
-				_selectFailButton.selected = _currentView == VIEW_FAIL_DETAILS;
+				selectLogButton.selected = currentView == VIEW_LOG;
+				selectFailButton.selected = currentView == VIEW_FAIL_DETAILS;
 			}
 
-			switch ( _currentView )
+			switch ( currentView )
 			{
 				case VIEW_FAIL_DETAILS:
 				{
-					if ( !_failDetailHeader.parent )
+					if (!failDetailHeader.parent)
 					{
-						_subviewLayout.addChildAt( _failDetailHeader, 0 );
+						subviewLayout.addChildAt( failDetailHeader, 0 );
 					}
-					_subviewLayout.draw();
-					_failDetailHeader.width = width;
+					subviewLayout.draw();
+					failDetailHeader.width = width;
 					break;
 				}
 				case VIEW_LOG:
 				{
-					if ( _failDetailHeader.parent )
+					if (failDetailHeader.parent)
 					{
-						_failDetailHeader.parent.removeChild( _failDetailHeader );
+						failDetailHeader.parent.removeChild( failDetailHeader );
 					}
-					_subviewLayout.draw();
+					subviewLayout.draw();
 					break;
 				}
 			}
-			_subviewLayout.draw();
+			subviewLayout.draw();
 
-			_text.setSize( width,
-			               height - titleBar.height - _text.y - _subviewSelection.height - _subviewSelection.spacing
-			);
-			_text.draw();
+			mainTextArea.setSize( width, height - titleBar.height - mainTextArea.y - subviewSelection.height - subviewSelection.spacing );
+			mainTextArea.draw();
 		}
 
 		public function setTestElement( element:TestElement ):void
 		{
-			_element = element;
-			if ( _element.failure && !_element.ignored )
+			this.element = element;
+			if (element.failure && !element.ignored)
 			{
-				_selectFailButton = new PushButton( _subviewSelection, 0, 0, "Fail Details", onShowFailDetails );
-				_selectFailButton.toggle = true;
-				_selectFailButton.selected = true;
+				selectFailButton = new PushButton( subviewSelection, 0, 0, "Fail Details", onShowFailDetails );
+				selectFailButton.toggle = true;
+				selectFailButton.selected = true;
 
-				_selectLogButton = new PushButton( _subviewSelection, 0, 0, "Log", onShowLog );
-				_selectLogButton.toggle = true;
-				_selectLogButton.selected = false;
+				selectLogButton = new PushButton( subviewSelection, 0, 0, "Log", onShowLog );
+				selectLogButton.toggle = true;
+				selectLogButton.selected = false;
 
-				_failDetailHeader.text = _element.failure.message.split("\n").join(" ");
-				_failDetailHeader.textField.multiline = false;
-				_text.text = _element.failure.stackTrace;
+				failDetailHeader.text = element.failure.message.split( "\n" ).join( " " );
+				failDetailHeader.textField.multiline = false;
+				mainTextArea.text = element.failure.stackTrace;
 
-				_currentView = VIEW_FAIL_DETAILS;
+				currentView = VIEW_FAIL_DETAILS;
 			}
 
-			if ( !_text.text && _element.log )
+			if (!mainTextArea.text && element.log)
 			{
-				_text.text = _element.log;
+				mainTextArea.text = element.log;
 
-				_currentView = VIEW_LOG;
+				currentView = VIEW_LOG;
 			}
 			invalidate();
 		}
 
 		private function onShowLog( event:MouseEvent ):void
 		{
-			_currentView = VIEW_LOG;
-			_text.text = _element.log;
+			currentView = VIEW_LOG;
+			mainTextArea.text = element.log;
 			invalidate();
 		}
 
 		private function onShowFailDetails( event:MouseEvent ):void
 		{
-			_currentView = VIEW_FAIL_DETAILS;
-			_text.text = _element.failure.stackTrace;
+			currentView = VIEW_FAIL_DETAILS;
+			mainTextArea.text = element.failure.stackTrace;
 			invalidate();
 		}
 

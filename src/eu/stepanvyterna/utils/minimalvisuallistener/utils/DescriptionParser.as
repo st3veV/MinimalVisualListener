@@ -36,9 +36,9 @@ package eu.stepanvyterna.utils.minimalvisuallistener.utils
 		public static function getTestName( description:IDescription ):String
 		{
 			var metadata:Array = description.getAllMetadata();
-			for each ( var annotation:MetaDataAnnotation in metadata )
+			for each (var annotation:MetaDataAnnotation in metadata)
 			{
-				if ( annotation.hasArgument( "description" ) )
+				if (annotation.hasArgument( "description" ))
 				{
 					return annotation.getArgument( "description" ).value;
 				}

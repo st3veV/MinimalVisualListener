@@ -42,6 +42,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 	public class TestResultListItem extends ListItem
 	{
 		private static const LIST_SCROLLBAR_WIDTH:Number = 10;
+		private static const MILISECONDS_LABEL:String = "ms";
 
 		private var passedLight:IndicatorLight;
 		private var label:Label;
@@ -82,11 +83,11 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 
 			graphics.clear();
 
-			if ( _selected )
+			if (_selected)
 			{
 				graphics.beginFill( _selectedColor );
 			}
-			else if ( _mouseOver )
+			else if (_mouseOver)
 			{
 				graphics.beginFill( _rolloverColor );
 			}
@@ -97,25 +98,25 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 			graphics.drawRect( 0, 0, width, height );
 			graphics.endFill();
 
-			if ( !_data )
+			if (!_data)
 			{
 				return;
 			}
 
 			var testElement:TestElement = _data as TestElement;
-			if ( testElement )
+			if (testElement)
 			{
-				if ( !testElement.executed )
+				if (!testElement.executed)
 				{
-					passedLight.color = 0x666666;
+					passedLight.color = Theme.COLOR_NOT_PROCESSD;
 				}
 				else
 				{
-					if ( testElement.ignored )
+					if (testElement.ignored)
 					{
 						passedLight.color = Theme.COLOR_IGNORE;
 					}
-					else if ( testElement.passed )
+					else if (testElement.passed)
 					{
 						passedLight.color = Theme.COLOR_PASS;
 					}
@@ -127,18 +128,18 @@ package eu.stepanvyterna.utils.minimalvisuallistener.components
 				passedLight.isLit = true;
 				passedLight.draw();
 				label.text = testElement.readableName;
-				if ( !testElement.passed && testElement.failure )
+				if (!testElement.passed && testElement.failure)
 				{
-					if ( !failLabel )
+					if (!failLabel)
 					{
-						failLabel = new Label( layout, 0, 0, testElement.failure.message.split("\n").join(" ") );
+						failLabel = new Label( layout, 0, 0, testElement.failure.message.split( "\n" ).join( " " ) );
 						failLabel.textField.multiline = false;
 						failLabel.textField.textColor = Theme.COLOR_FAIL;
 					}
 				}
-				if ( testElement.executed && !executionTime )
+				if (testElement.executed && !executionTime)
 				{
-					executionTime = new Label( this, 0, 0, String( testElement.executionTime ) );
+					executionTime = new Label( this, 0, 0, String( testElement.executionTime ) + MILISECONDS_LABEL );
 					executionTime.draw();
 					executionTime.move( width - executionTime.width - LIST_SCROLLBAR_WIDTH, (height - executionTime.height) * .5 );
 				}

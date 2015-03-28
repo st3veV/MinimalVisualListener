@@ -49,18 +49,18 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 		public function getStats():TestSuiteElementStats
 		{
 			var stats:TestSuiteElementStats = new TestSuiteElementStats();
-			for ( var i:int = 0; i < _testElements.length; i++ )
+			for (var i:int = 0; i < _testElements.length; i++)
 			{
 				var element:TestElement = _testElements[ i ];
-				if ( element.executed )
+				if (element.executed)
 				{
-					if ( element.ignored )
+					if (element.ignored)
 					{
 						stats.ignored++;
 					}
 					else
 					{
-						if ( element.passed )
+						if (element.passed)
 						{
 							stats.passed++;
 						}
@@ -87,9 +87,9 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 
 		public function getTestElement( description:IDescription ):TestElement
 		{
-			for each ( var element:TestElement in _testElements )
+			for each (var element:TestElement in _testElements)
 			{
-				if ( element.name == description.displayName )
+				if (element.name == description.displayName)
 				{
 					return element;
 				}

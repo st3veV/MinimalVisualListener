@@ -108,7 +108,7 @@ package eu.stepanvyterna.utils.minimalvisuallistener.data
 
 		public function addLogMessage( message:String ):void
 		{
-			if ( !_log )
+			if (!_log)
 			{
 				_log = message;
 			}
